@@ -16,4 +16,3 @@ Route::group(['middleware' => ['auth:api']] , function(){
     Route::put('/user/profile' , [ProfileController::class , 'updateProfile']);
     Route::put('/user/avatar' , [ProfileController::class , 'updateAvatar']);
 });
-
