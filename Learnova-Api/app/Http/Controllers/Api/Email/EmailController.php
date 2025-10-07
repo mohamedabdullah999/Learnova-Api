@@ -12,7 +12,7 @@ class EmailController extends Controller
     public function welcomeToDevelopers()
     {
 
-        Mail::to("ahmedalinaguib33@gmail.com")->send(new WelcomeToDevelopers());
+        Mail::to("jerry2562005@gmail.com")->send(new WelcomeToDevelopers());
 
         return response()->json([
             'message' => 'Welcome email sent successfully'
