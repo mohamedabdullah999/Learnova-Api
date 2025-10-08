@@ -50,7 +50,7 @@ class Sessioncontroller extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'invalid Email or Password'
-            ]);
+            ] , 401);
         }
         else{
             return response()->json([
