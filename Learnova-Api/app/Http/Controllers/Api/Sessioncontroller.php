@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\User\UserResource;
 use App\Http\Requests\User\StoreUserRequest;
+use App\Traits\RoleHelper;
 
 class Sessioncontroller extends Controller
 {
+    use RoleHelper;
+
     public function register(StoreUserRequest $request)
     {
         $validated = $request->validated();
@@ -22,13 +25,15 @@ class Sessioncontroller extends Controller
             $imgPath = $request->file('img')->store('users', 'public');
         }
 
+        $role = $this->getUserRole($validated['email']);
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password'=> $validated['password'],
             'phone' => $validated['phone'],
             'img' => $imgPath,
-            'role' => $validated['role'] ?? 'user',
+            'role' => $role,
         ]);
 
         return response()->json([
