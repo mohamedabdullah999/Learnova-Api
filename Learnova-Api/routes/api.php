@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\User\ProfileController;
 use App\Http\Controllers\Api\Email\EmailController;
 use App\Http\Controllers\Api\ForgetPaswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\InstructorController;
 
 Route::get('/email/welcome', [EmailController::class, 'welcomeToDevelopers']);
 Route::post('/register' , [Sessioncontroller::class , 'register']);
@@ -20,4 +21,9 @@ Route::group(['middleware' => ['auth:api']] , function(){
     Route::get('/logout' , [Sessioncontroller::class , 'logout']);
     Route::put('/user/profile' , [ProfileController::class , 'updateProfile']);
     Route::put('/user/avatar' , [ProfileController::class , 'updateAvatar']);
+});
+
+
+Route::group(['middleware' => ['checkAdmin']] , function(){
+    Route::apiResource('/instructors' , InstructorController::class);
 });
