@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Email\EmailController;
 use App\Http\Controllers\Api\ForgetPaswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\InstructorController;
+use App\Http\Controllers\Api\CategoryController;
 
 Route::get('/email/welcome', [EmailController::class, 'welcomeToDevelopers']);
 Route::post('/register' , [Sessioncontroller::class , 'register']);
@@ -24,6 +25,10 @@ Route::group(['middleware' => ['auth:api']] , function(){
 });
 
 
-Route::group(['middleware' => ['checkAdmin']] , function(){
+Route::group(['middleware' => ['auth:api','checkAdmin']] , function(){
     Route::apiResource('/instructors' , InstructorController::class);
+    Route::apiResource('/categories', CategoryController::class)
+    ->only('store', 'update', 'destroy');
 });
+
+Route::get('/categories', [CategoryController::class, 'index']);
