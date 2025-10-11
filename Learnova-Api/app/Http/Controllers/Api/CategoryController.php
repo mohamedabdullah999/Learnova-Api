@@ -16,12 +16,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categores = Category::all();
+        $categores = Category::with('courses')->latest()->get();
 
         return response()->json([
             'status' => true,
             'message' => 'Categories retrieved successfully',
-            'categories' => $categores
+            'categories' => CategoryResource::collection($categores)
         ]);
     }
 
@@ -53,7 +53,7 @@ class CategoryController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Category updated successfully',
-            'category' => new CategoryResource($category)
+            'category' => new CategoryResource($category->load('courses'))
         ]);
     }
 

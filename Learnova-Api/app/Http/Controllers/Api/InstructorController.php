@@ -16,7 +16,7 @@ class InstructorController extends Controller
      */
     public function index()
     {
-        $instructors = Instructor::latest()->get();
+        $instructors = Instructor::with('courses.category')->latest()->get();
         return response()->json([
             'status' => true,
             'message' => 'Instructors retrieved successfully',
@@ -53,7 +53,7 @@ class InstructorController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Instructor retrieved successfully',
-            'instructor' => new InstructorResource($instructor)
+            'instructor' => new InstructorResource($instructor->load('courses.category'))
         ]);
     }
 
