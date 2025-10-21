@@ -13,6 +13,7 @@ class Course extends Model
         'title',
         'description',
         'image',
+        'price',
         'status',
         'category_id',
         'instructor_id',
@@ -27,5 +28,6 @@ class Course extends Model
     {
         return $this->belongsTo(Instructor::class);
     }
+
 
 }
