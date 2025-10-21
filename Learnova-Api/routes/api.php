@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\Courses\CourseController;
 use App\Http\Controllers\Api\Cart\CartController;
 use App\Http\Controllers\Api\Order\OrderController;
+use App\Http\Controllers\Api\Contact\ContactController;
 
 Route::get('/email/welcome', [EmailController::class, 'welcomeToDevelopers']);
 Route::post('/register' , [Sessioncontroller::class , 'register']);
@@ -50,9 +51,11 @@ Route::group(['middleware' => ['auth:api','checkAdmin']] , function(){
     //Admin Order Routes
     Route::get('/orders', [OrderController::class, 'listOrders']);
     Route::post('/order/{order_id}/approve', [OrderController::class, 'approveOrder']);
+
+    Route::apiResource('contacts', ContactController::class)->except(['store']);
 });
 
 Route::apiResource('/courses', CourseController::class)
 ->only('index', 'show');
 
-
+Route::post('contacts', [ContactController::class, 'store']);
