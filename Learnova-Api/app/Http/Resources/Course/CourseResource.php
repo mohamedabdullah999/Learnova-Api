@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Instractor\InstructorResource;
 use App\Http\Resources\Category\CategoryResource;
+use App\Http\Resources\Lesson\LessonResource;
 
 class CourseResource extends JsonResource
 {
@@ -26,6 +27,7 @@ class CourseResource extends JsonResource
             'status' => $this->status,
             'category' => new CategoryResource($this->whenLoaded('category')),
             'instructor' => new InstructorResource($this->whenLoaded('instructor')),
+            'lessons' => LessonResource::collection($this->whenLoaded('lessons')),
         ];
     }
 
