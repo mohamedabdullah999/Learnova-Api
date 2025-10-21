@@ -16,7 +16,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::with(['category', 'instructor'])->latest()->get();
+        $courses = Course::with(['category', 'instructor' , 'lessons'])->latest()->get();
 
         return response()->json([
             'status' => true,
@@ -49,7 +49,7 @@ class CourseController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Course retrieved successfully',
-            'course' => new CourseResource($course->load(['category', 'instructor']))
+            'course' => new CourseResource($course->load(['category', 'instructor' , 'lessons']))
         ]);
     }
 

@@ -60,7 +60,7 @@ class ProfileController extends Controller
     public function enrollments()
     {
         $user = auth()->user();
-        $enrollments = $user->enrollments()->with('course')->get();
+        $enrollments = $user->courses()->with('category', 'instructor', 'lessons')->get();
 
         return response()->json([
             'message' => 'Enrollments retrieved successfully',

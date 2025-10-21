@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\CartItem;
-// use App\Models\Course;
+use App\Models\Course;
 use App\Models\Order;
 use App\Models\Enrollment;
 class User extends Authenticatable implements JWTSubject
@@ -81,7 +81,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Order::class);
     }
 
-    public function enrollments(){
-        return $this->hasMany(Enrollment::class);
+    public function courses(){
+        return $this->belongsToMany(Course::class, 'enrollments');
     }
 }
