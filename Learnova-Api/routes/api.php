@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\InstructorController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\Courses\CourseController;
+use App\Http\Controllers\Api\Cart\CartController;
+use App\Http\Controllers\Api\Order\OrderController;
 
 Route::get('/email/welcome', [EmailController::class, 'welcomeToDevelopers']);
 Route::post('/register' , [Sessioncontroller::class , 'register']);
@@ -25,6 +27,16 @@ Route::group(['middleware' => ['auth:api']] , function(){
     Route::get('/logout' , [Sessioncontroller::class , 'logout']);
     Route::put('/user/profile' , [ProfileController::class , 'updateProfile']);
     Route::put('/user/avatar' , [ProfileController::class , 'updateAvatar']);
+
+    //Cart Routes
+    Route::post('/cart/add' , [CartController::class , 'addToCart']);
+    Route::get('/cart/view' , [CartController::class , 'viewCart']);
+
+    //checkout
+    Route::post('/order/checkout' , [OrderController::class , 'checkout']);
+
+    //User Enrollments
+    Route::get('/user/enrollments' , [ProfileController::class , 'enrollments']);
 });
 
 
@@ -34,6 +46,10 @@ Route::group(['middleware' => ['auth:api','checkAdmin']] , function(){
     ->only('store', 'update', 'destroy');
     Route::apiResource('/courses', CourseController::class)
     ->only('store', 'update', 'destroy');
+
+    //Admin Order Routes
+    Route::get('/orders', [OrderController::class, 'listOrders']);
+    Route::post('/order/{order_id}/approve', [OrderController::class, 'approveOrder']);
 });
 
 Route::apiResource('/courses', CourseController::class)

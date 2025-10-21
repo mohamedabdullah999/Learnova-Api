@@ -56,4 +56,15 @@ class ProfileController extends Controller
             'user' => new UserAvatarResource($user)
         ]);
     }
+
+    public function enrollments()
+    {
+        $user = auth()->user();
+        $enrollments = $user->enrollments()->with('course')->get();
+
+        return response()->json([
+            'message' => 'Enrollments retrieved successfully',
+            'enrollments' => $enrollments
+        ]);
+    }
 }
