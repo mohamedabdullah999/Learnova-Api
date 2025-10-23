@@ -28,7 +28,7 @@ Route::group(['middleware' => ['auth:api']] , function(){
     Route::get('/refresh' , [Sessioncontroller::class , 'refresh']);
     Route::get('/logout' , [Sessioncontroller::class , 'logout']);
     Route::patch('/user/profile' , [ProfileController::class , 'updateProfile']);
-    Route::patch('/user/avatar' , [ProfileController::class , 'updateAvatar']);
+    Route::post('/user/avatar' , [ProfileController::class , 'updateAvatar']);
 
     //Cart Routes
     Route::post('/cart/add' , [CartController::class , 'addToCart']);
