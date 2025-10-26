@@ -2,21 +2,11 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Http\Resources\UserResource;
-use App\Http\Requests\StoreUserRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Http\Resources\User\UserProfileResource;
-use App\Http\Resources\User\UserAvatarResource;
 use App\Http\Requests\User\AvatarUserRequest;
 use App\Http\Requests\User\ProfileUserRequest;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
-
-
+use App\Http\Resources\User\UserProfileResource;
+use App\Services\CloudinaryService;
 
 class ProfileController extends Controller
 {
@@ -30,7 +20,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => new UserProfileResource($user)
+            'user' => new UserProfileResource($user),
         ]);
     }
 
@@ -38,23 +28,28 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
 
-        $validated = $request->validated();
-
         if ($request->hasFile('img')) {
+            $filePath = $request->file('img')->getRealPath();
 
-            if ($user->img) {
-                \Storage::disk('public')->delete($user->img);
-            }
+            $cloudinary = new CloudinaryService;
+            $uploaded = $cloudinary->update($filePath, $user->img_public_id, 'users');
 
-            $imgPath = $request->file('img')->store('users', 'public');
-            $user->img = $imgPath;
-            $user->save();
+            $user->update([
+                'img' => $uploaded['secure_url'],
+                'img_public_id' => $uploaded['public_id'],
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Avatar updated successfully',
+                'url' => $uploaded['secure_url'],
+            ]);
         }
 
         return response()->json([
-            'message' => 'Avatar updated successfully',
-            'user' => new UserAvatarResource($user)
-        ]);
+            'status' => false,
+            'message' => 'No Avatar Passed',
+        ], 400);
     }
 
     public function enrollments()
@@ -64,7 +59,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'message' => 'Enrollments retrieved successfully',
-            'enrollments' => $enrollments
+            'enrollments' => $enrollments,
         ]);
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('video_path');
+            $table->string('video_public_id')->nullable();
             $table->integer('duration')->nullable();
             $table->timestamps();
         });

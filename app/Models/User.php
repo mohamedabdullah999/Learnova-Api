@@ -7,10 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-use App\Models\CartItem;
-use App\Models\Course;
-use App\Models\Order;
-use App\Models\Enrollment;
+
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -27,7 +24,8 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'phone',
         'img',
-        'role'
+        'role',
+        'img_public_id',
     ];
 
     /**
@@ -73,15 +71,18 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function cartItems(){
+    public function cartItems()
+    {
         return $this->hasMany(CartItem::class);
     }
 
-    public function orders(){
+    public function orders()
+    {
         return $this->hasMany(Order::class);
     }
 
-    public function courses(){
+    public function courses()
+    {
         return $this->belongsToMany(Course::class, 'enrollments');
     }
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone');
             $table->string('img')->nullable();
+            $table->string('img_public_id')->nullable();
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->softDeletes();
             $table->rememberToken();

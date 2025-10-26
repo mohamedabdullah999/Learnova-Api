@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Instractor;
 
+use App\Http\Resources\Course\CourseResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Course\CourseResource;
 
 class InstructorResource extends JsonResource
 {
@@ -20,7 +20,7 @@ class InstructorResource extends JsonResource
             'name' => $this->name,
             'bio' => $this->bio,
             'expertise' => $this->expertise,
-            'img' => $this->image ? asset('storage/' . $this->image) : null,
+            'img' => $this->image,
             'linkedin' => $this->linkedin,
             'twitter' => $this->twitter,
             'courses' => CourseResource::collection($this->whenLoaded('courses')),

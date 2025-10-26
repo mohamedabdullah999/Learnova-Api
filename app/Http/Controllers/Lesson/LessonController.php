@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Lesson;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Lesson\LessonRequest;
 use App\Http\Requests\Lesson\UpdateLessonRequest;
 use App\Http\Resources\Lesson\LessonResource;
 use App\Models\Lesson;
+use App\Services\CloudinaryService;
 
 class LessonController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      */
@@ -19,10 +18,15 @@ class LessonController extends Controller
     {
         $data = $request->validated();
 
-        // Handle video upload
+        // Handle video upload via Cloudinary
         if ($request->hasFile('video')) {
-            $videoPath = $request->file('video')->store('lessons/videos', 'public');
-            $data['video_path'] = $videoPath;
+            $filePath = $request->file('video')->getRealPath();
+
+            $cloudinary = new CloudinaryService;
+            $uploaded = $cloudinary->store($filePath, 'lessons');
+
+            $data['video_public_id'] = $uploaded['public_id'];
+            $data['video_path'] = $uploaded['secure_url'];
         }
 
         $lesson = Lesson::create($data);
@@ -30,7 +34,7 @@ class LessonController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Lesson created successfully',
-            'lesson' => new LessonResource($lesson->load('course'))
+            'lesson' => new LessonResource($lesson->load('course')),
         ], 201);
     }
 
@@ -49,14 +53,30 @@ class LessonController extends Controller
     {
         $data = $request->validated();
 
+        // Handle video upload to Cloudinary
         if ($request->hasFile('video')) {
-            $videoPath = $request->file('video')->store('videos', 'public');
-            $data['video_path'] = $videoPath;
+            $filePath = $request->file('video')->getRealPath();
+
+            $cloudinary = new CloudinaryService;
+
+            // رفع الفيديو الجديد وحذف القديم لو موجود
+            $uploaded = $cloudinary->update(
+                $filePath,
+                $lesson->video_public_id ?? null,
+                'lessons'
+            );
+
+            $data['video_path'] = $uploaded['secure_url'];
+            $data['video_public_id'] = $uploaded['public_id'];
         }
 
         $lesson->update($data);
 
-        return new LessonResource($lesson->load('course'));
+        return response()->json([
+            'status' => true,
+            'message' => 'Lesson updated successfully',
+            'lesson' => new LessonResource($lesson->load('course')),
+        ]);
     }
 
     /**
@@ -66,17 +86,21 @@ class LessonController extends Controller
     {
         if ($lesson->course_id != $courseId) {
             return response()->json([
-            'status' => false,
-            'message' => 'Lesson does not belong to this course'
+                'status' => false,
+                'message' => 'Lesson does not belong to this course',
             ], 400);
+        }
+
+        if ($lesson->video_public_id) {
+            $cloudinary = new CloudinaryService;
+            $cloudinary->delete($lesson->video_public_id);
         }
 
         $lesson->delete();
 
         return response()->json([
             'status' => true,
-            'message' => 'Lesson deleted successfully'
+            'message' => 'Lesson deleted successfully',
         ]);
     }
-
 }
