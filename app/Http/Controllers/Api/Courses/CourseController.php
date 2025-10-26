@@ -14,6 +14,15 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function allCourses()
+    {
+        $courses = Course::with(['category', 'instructor'])->latest()->get();
+
+        return response()->json([
+            'courses' => CourseResource::collection($courses),
+        ], 200);
+    }
+
     public function index()
     {
         $courses = Course::with(['category', 'instructor', 'lessons'])->latest()->get();
