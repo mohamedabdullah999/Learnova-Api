@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\Contact\ContactController;
 use App\Http\Controllers\Api\Courses\CourseController;
 use App\Http\Controllers\Api\InstructorController;
 use App\Http\Controllers\Api\Order\OrderController;
@@ -17,6 +18,8 @@ Route::prefix('admin')
             ->only(['store', 'update', 'destroy']);
 
         Route::apiResource('courses', CourseController::class);
+
+        Route::apiResource('contacts', ContactController::class)->only('show', 'update', 'store', 'destroy');
 
         Route::get('/orders', [OrderController::class, 'listOrders']);
         Route::post('/order/{order_id}/approve', [OrderController::class, 'approveOrder']);
