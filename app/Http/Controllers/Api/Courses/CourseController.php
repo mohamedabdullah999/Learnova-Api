@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\Courses;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Course\StoreCourseRequest;
 use App\Http\Requests\Course\UpdateCourseRequest;
 use App\Http\Resources\Course\CourseResource;
 use App\Models\Course;
+use App\Services\CloudinaryService;
 
 class CourseController extends Controller
 {
@@ -16,12 +16,12 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::with(['category', 'instructor' , 'lessons'])->latest()->get();
+        $courses = Course::with(['category', 'instructor', 'lessons'])->latest()->get();
 
         return response()->json([
             'status' => true,
             'message' => 'Courses retrieved successfully',
-            'courses' => CourseResource::collection($courses)
+            'courses' => CourseResource::collection($courses),
         ]);
     }
 
@@ -37,7 +37,7 @@ class CourseController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Course created successfully',
-            'course' => new CourseResource($course)
+            'course' => new CourseResource($course),
         ], 201);
     }
 
@@ -49,7 +49,7 @@ class CourseController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Course retrieved successfully',
-            'course' => new CourseResource($course->load(['category', 'instructor' , 'lessons']))
+            'course' => new CourseResource($course->load(['category', 'instructor', 'lessons'])),
         ]);
     }
 
@@ -65,7 +65,7 @@ class CourseController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Course updated successfully',
-            'course' => new CourseResource($course->load(['category', 'instructor']))
+            'course' => new CourseResource($course->load(['category', 'instructor'])),
         ]);
     }
 
@@ -74,11 +74,18 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
+        foreach ($course->lessons as $lesson) {
+            if ($lesson->video_public_id) {
+                $cloudinary = new CloudinaryService;
+                $cloudinary->delete($lesson->video_public_id);
+            }
+        }
+
         $course->delete();
 
         return response()->json([
             'status' => true,
-            'message' => 'Course deleted successfully'
+            'message' => 'Course deleted successfully',
         ]);
     }
 }
