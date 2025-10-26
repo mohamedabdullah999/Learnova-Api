@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Course;
+use Illuminate\Database\Eloquent\Model;
 
 class Instructor extends Model
 {
@@ -17,6 +16,7 @@ class Instructor extends Model
         'image',
         'linkedin',
         'twitter',
+        'img_public_id',
     ];
 
     public function courses()

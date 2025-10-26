@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->string('expertise')->nullable();
             $table->string('image')->nullable();
+            $table->string('img_public_id')->nullable();
             $table->string('linkedin')->nullable();
             $table->string('twitter')->nullable();
             $table->timestamps();

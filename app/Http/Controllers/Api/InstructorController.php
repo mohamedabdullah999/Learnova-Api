@@ -7,6 +7,7 @@ use App\Http\Requests\Instractor\StoreInstructorRequest;
 use App\Http\Requests\Instractor\UpdateInstructorRequest;
 use App\Http\Resources\Instractor\InstructorResource;
 use App\Models\Instructor;
+use App\Services\CloudinaryService;
 use Illuminate\Support\Facades\Storage;
 
 class InstructorController extends Controller
@@ -17,10 +18,11 @@ class InstructorController extends Controller
     public function index()
     {
         $instructors = Instructor::with('courses.category')->latest()->get();
+
         return response()->json([
             'status' => true,
             'message' => 'Instructors retrieved successfully',
-            'instructors' => InstructorResource::collection($instructors)
+            'instructors' => InstructorResource::collection($instructors),
         ]);
     }
 
@@ -32,15 +34,20 @@ class InstructorController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('instructors', 'public');
-        }
+            $filePath = $request->file('image')->getRealPath();
 
+            $cloudinary = new CloudinaryService;
+            $uploaded = $cloudinary->update($filePath, null, 'instructors');
+
+            $data['img_public_id'] = $uploaded['public_id'];
+            $data['image'] = $uploaded['secure_url'];
+        }
         $instructor = Instructor::create($data);
 
         return response()->json([
             'status' => true,
             'message' => 'Instructor created successfully',
-            'instructor' => new InstructorResource($instructor)
+            'instructor' => new InstructorResource($instructor),
         ], 201);
 
     }
@@ -53,10 +60,9 @@ class InstructorController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Instructor retrieved successfully',
-            'instructor' => new InstructorResource($instructor->load('courses.category'))
+            'instructor' => new InstructorResource($instructor->load('courses.category')),
         ]);
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -66,11 +72,13 @@ class InstructorController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($instructor->image) {
-                Storage::disk('public')->delete($instructor->image);
-            }
-            $data['image'] = $request->file('image')->store('instructors', 'public');
+            $filePath = $request->file('image')->getRealPath();
+
+            $cloudinary = new CloudinaryService;
+            $uploaded = $cloudinary->update($filePath, $instructor->img_public_id, 'instructors');
+
+            $data['img_public_id'] = $uploaded['public_id'];
+            $data['image'] = $uploaded['secure_url'];
         }
 
         $instructor->update($data);
@@ -78,7 +86,7 @@ class InstructorController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Instructor updated successfully',
-            'instructor' => new InstructorResource($instructor)
+            'instructor' => new InstructorResource($instructor),
         ]);
     }
 
@@ -96,7 +104,7 @@ class InstructorController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Instructor deleted successfully'
+            'message' => 'Instructor deleted successfully',
         ]);
     }
 }
