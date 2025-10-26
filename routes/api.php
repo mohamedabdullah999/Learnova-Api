@@ -12,5 +12,4 @@ Route::prefix('v1')->group(function () {
     require __DIR__.'/api/lessons.php';
     require __DIR__.'/api/admin.php';
     require __DIR__.'/api/contacts.php';
-    require __DIR__.'/api/instructors.php';
 });
