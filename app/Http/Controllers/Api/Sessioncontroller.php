@@ -63,6 +63,7 @@ class Sessioncontroller extends Controller
                 'status' => true,
                 'message' => 'User logged in',
                 'token' => $token,
+                'user' => new UserResource($user),
             ]);
         }
     }

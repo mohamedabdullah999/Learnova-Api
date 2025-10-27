@@ -19,7 +19,9 @@ Route::prefix('admin')
 
         Route::apiResource('courses', CourseController::class);
 
-        Route::apiResource('contacts', ContactController::class)->only('show', 'update', 'destroy');
+        Route::apiResource('contacts', ContactController::class)->except([
+            'store',
+        ]);
 
         Route::get('/orders', [OrderController::class, 'listOrders']);
         Route::post('/order/{order_id}/approve', [OrderController::class, 'approveOrder']);
