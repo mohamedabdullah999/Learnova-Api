@@ -53,6 +53,8 @@ class Sessioncontroller extends Controller
 
         $token = auth()->attempt($validated);
 
+        $user = auth()->user();
+
         if (! $token) {
             return response()->json([
                 'status' => false,
