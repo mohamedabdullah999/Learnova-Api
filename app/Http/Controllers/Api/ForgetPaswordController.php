@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Validation\Rules\Password;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
-use App\Mail\ResetPasswordMail;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Password;
 
 class ForgetPaswordController extends Controller
 {
@@ -28,27 +25,27 @@ class ForgetPaswordController extends Controller
             ['email' => $request->email],
             [
                 'token' => $token,
-                'created_at' => now()
+                'created_at' => now(),
             ]
         );
 
         // Send the reset link via email
-        Mail::to($request->email)->send(new ResetPasswordMail($token));
+        \App\Jobs\SendResetPasswordEmail::dispatch($request->email, $token);
 
         return response()->json([
             'status' => true,
-            'message' => 'Password reset link sent to your email.'
-            ] , 200);
+            'message' => 'Password reset link sent to your email.',
+        ], 200);
     }
 
     public function resetPassword(Request $request)
     {
-        //validate
+        // validate
         $request->validate([
-                'email' => 'required|email|exists:users,email',
-                'token' => 'required|string',
-                'password' =>  ['required' , 'confirmed' , Password::min(5)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
-            ]
+            'email' => 'required|email|exists:users,email',
+            'token' => 'required|string',
+            'password' => ['required', 'confirmed', Password::min(5)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
+        ]
         );
 
         // Check if the token is valid and email
@@ -57,10 +54,10 @@ class ForgetPaswordController extends Controller
             ->where('token', $request->token)
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'status' => false,
-                'message' => 'Invalid token or email.'
+                'message' => 'Invalid token or email.',
             ], 400);
         }
 
@@ -71,11 +68,11 @@ class ForgetPaswordController extends Controller
         $user->save();
 
         // Delete the token after successful password reset
-        DB::table('password_reset_tokens')->where('email', $request->email)->where('token' , $request->token)->delete();
+        DB::table('password_reset_tokens')->where('email', $request->email)->where('token', $request->token)->delete();
 
         return response()->json([
             'status' => true,
-            'message' => 'Password has been reset successfully.'
+            'message' => 'Password has been reset successfully.',
         ], 200);
     }
 }

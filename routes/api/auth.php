@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Sessioncontroller;
 use App\Http\Controllers\Api\ForgetPaswordController;
+use App\Http\Controllers\Api\Sessioncontroller;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [Sessioncontroller::class, 'register'])->middleware('throttle:register');

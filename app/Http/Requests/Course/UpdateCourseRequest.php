@@ -24,7 +24,6 @@ class UpdateCourseRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|string',
             'category_id' => 'sometimes|exists:categories,id',
             'instructor_id' => 'sometimes|exists:instructors,id',
             'status' => 'nullable|in:draft,published',

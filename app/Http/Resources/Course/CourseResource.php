@@ -2,11 +2,11 @@
 
 namespace App\Http\Resources\Course;
 
+use App\Http\Resources\Category\CategoryResource;
+use App\Http\Resources\Instractor\InstructorResource;
+use App\Http\Resources\Lesson\LessonResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Instractor\InstructorResource;
-use App\Http\Resources\Category\CategoryResource;
-use App\Http\Resources\Lesson\LessonResource;
 
 class CourseResource extends JsonResource
 {
@@ -15,14 +15,12 @@ class CourseResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'image' => $this->image,
             'price' => $this->price,
             'status' => $this->status,
             'category' => new CategoryResource($this->whenLoaded('category')),
@@ -30,5 +28,4 @@ class CourseResource extends JsonResource
             'lessons' => LessonResource::collection($this->whenLoaded('lessons')),
         ];
     }
-
 }
