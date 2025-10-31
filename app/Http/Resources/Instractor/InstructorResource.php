@@ -18,9 +18,10 @@ class InstructorResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'email' => $this->email,
             'bio' => $this->bio,
             'expertise' => $this->expertise,
-            'img' => $this->image,
+            'img' => $this->img,
             'linkedin' => $this->linkedin,
             'twitter' => $this->twitter,
             'courses' => CourseResource::collection($this->whenLoaded('courses')),

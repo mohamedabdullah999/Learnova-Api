@@ -33,14 +33,14 @@ class InstructorController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            $filePath = $request->file('image')->getRealPath();
+        if ($request->hasFile('img')) {
+            $filePath = $request->file('img')->getRealPath();
 
             $cloudinary = new CloudinaryService;
             $uploaded = $cloudinary->update($filePath, null, 'instructors');
 
             $data['img_public_id'] = $uploaded['public_id'];
-            $data['image'] = $uploaded['secure_url'];
+            $data['img'] = $uploaded['secure_url'];
         }
         $instructor = Instructor::create($data);
 
@@ -71,14 +71,14 @@ class InstructorController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            $filePath = $request->file('image')->getRealPath();
+        if ($request->hasFile('img')) {
+            $filePath = $request->file('img')->getRealPath();
 
             $cloudinary = new CloudinaryService;
             $uploaded = $cloudinary->update($filePath, $instructor->img_public_id, 'instructors');
 
             $data['img_public_id'] = $uploaded['public_id'];
-            $data['image'] = $uploaded['secure_url'];
+            $data['img'] = $uploaded['secure_url'];
         }
 
         $instructor->update($data);
@@ -96,8 +96,9 @@ class InstructorController extends Controller
     public function destroy(Instructor $instructor)
     {
         // Delete image if exists
-        if ($instructor->image) {
-            Storage::disk('public')->delete($instructor->image);
+        if ($instructor->img_public_id) {
+            $cloudinary = new CloudinaryService;
+            $cloudinary->delete($instructor->img_public_id);
         }
 
         $instructor->delete();

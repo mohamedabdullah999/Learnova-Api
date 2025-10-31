@@ -23,9 +23,10 @@ class StoreInstructorRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:instructors,email',
             'bio' => 'nullable|string',
             'expertise' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'linkedin' => 'nullable|url',
             'twitter' => 'nullable|url',
         ];
