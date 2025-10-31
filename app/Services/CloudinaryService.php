@@ -43,6 +43,6 @@ class CloudinaryService
 
     public function delete($publicId)
     {
-        $this->cloudinary->uploadApi()->destroy((int) $publicId);
+        $this->cloudinary->uploadApi()->destroy($publicId);
     }
 }

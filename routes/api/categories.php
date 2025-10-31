@@ -2,4 +2,7 @@
 
 use App\Http\Controllers\Api\CategoryController;
 
-Route::get('/categories', [CategoryController::class, 'index']);
+Route::middleware('throttle:cart')->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index']);
+
+});

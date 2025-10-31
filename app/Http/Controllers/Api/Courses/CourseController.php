@@ -41,6 +41,16 @@ class CourseController extends Controller
     {
         $data = $request->validated();
 
+        if ($request->hasFile('img')) {
+            $filePath = $request->file('img')->getRealPath();
+
+            $cloudinary = new CloudinaryService;
+            $uploaded = $cloudinary->store($filePath, 'courses');
+
+            $data['img'] = $uploaded['secure_url'];
+            $data['img_public_id'] = $uploaded['public_id'];
+        }
+
         $course = Course::create($data);
 
         return response()->json([
@@ -68,6 +78,16 @@ class CourseController extends Controller
     public function update(UpdateCourseRequest $request, Course $course)
     {
         $data = $request->validated();
+
+        if ($request->hasFile('img')) {
+            $filePath = $request->file('img')->getRealPath();
+
+            $cloudinary = new CloudinaryService;
+            $uploaded = $cloudinary->update($filePath, $course->img_public_id, 'courses');
+
+            $data['img'] = $uploaded['secure_url'];
+            $data['img_public_id'] = $uploaded['public_id'];
+        }
 
         $course->update($data);
 

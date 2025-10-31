@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Category;
-use App\Models\Instructor;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
@@ -12,7 +9,8 @@ class Course extends Model
     protected $fillable = [
         'title',
         'description',
-        'image',
+        'img',
+        'img_public_id',
         'price',
         'status',
         'category_id',
@@ -33,5 +31,4 @@ class Course extends Model
     {
         return $this->hasMany(Lesson::class);
     }
-
 }

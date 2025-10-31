@@ -3,19 +3,16 @@
 namespace App\Http\Controllers\Api\Order;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\CartItem;
+use App\Http\Resources\User\UserResource;
 use App\Models\Enrollment;
+use App\Models\Order;
 use App\Models\User;
-use App\Models\Course;
 
 class OrderController extends Controller
 {
-
     public function listOrders()
     {
-        $orders = Order::with('cartItems.course' , 'user')->where('status' , 'pending')->get();
+        $orders = Order::with('cartItems.course', 'user')->where('status', 'pending')->get();
 
         return response()->json(['orders' => $orders], 200);
     }
@@ -31,7 +28,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'Cart is empty.'], 400);
         }
 
-        $total = $cartItems->sum( fn ($item) => (float) ($item->course->price) );
+        $total = $cartItems->sum(fn ($item) => (float) ($item->course->price));
 
         // Create order
         $order = Order::create([
@@ -48,16 +45,17 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order placed successfully.', 'order' => $order], 201);
     }
 
-    public function approveOrder($order_id){
+    public function approveOrder($order_id)
+    {
         $order = Order::with('cartItems.course')->find($order_id);
 
-        if(!$order){
+        if (! $order) {
             return response()->json(['message' => 'Order not found.'], 404);
         }
 
         $order->update(['status' => 'approved']);
 
-        foreach($order->cartItems as $item){
+        foreach ($order->cartItems as $item) {
             Enrollment::create([
                 'user_id' => $order->user_id,
                 'course_id' => $item->course_id,
@@ -66,5 +64,20 @@ class OrderController extends Controller
         }
 
         return response()->json(['message' => 'Order approved and user enrolled in courses.', 'order' => $order], 200);
+    }
+
+    public function myPendingOrders()
+    {
+        $user = auth()->user();
+
+        $orders = Order::with('cartItems.course')
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->get();
+
+        return response()->json(['orders' => $orders,
+            'user' => new UserResource($user),
+        ],
+            200);
     }
 }

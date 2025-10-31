@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Contact\ContactController;
 use App\Http\Controllers\Api\Courses\CourseController;
 use App\Http\Controllers\Api\InstructorController;
 use App\Http\Controllers\Api\Order\OrderController;
+use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Lesson\LessonController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,4 +30,7 @@ Route::prefix('admin')
         Route::put('/courses/lessons/{lesson}', [LessonController::class, 'update']);
         Route::post('/courses/lessons', [LessonController::class, 'store']);
         Route::delete('/courses/{courseId}/lessons/{lesson}', [LessonController::class, 'destroy']);
+
+        // users
+        Route::get('users', [UserController::class, 'index']);
     });
