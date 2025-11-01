@@ -23,7 +23,7 @@ class UpdateInstructorRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:users,email,'.$this->instructor->id,
+            'email' => 'sometimes|required|email|unique:instructors,email,'.$this->instructor->id,
             'bio' => 'nullable|string',
             'expertise' => 'nullable|string|max:255',
             'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

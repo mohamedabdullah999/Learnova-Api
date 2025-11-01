@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Instractor\StoreInstructorRequest;
 use App\Http\Requests\Instractor\UpdateInstructorRequest;
 use App\Http\Resources\Instractor\InstructorResource;
+use App\Models\Expertise;
 use App\Models\Instructor;
 use App\Services\CloudinaryService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class InstructorController extends Controller
@@ -107,5 +109,29 @@ class InstructorController extends Controller
             'status' => true,
             'message' => 'Instructor deleted successfully',
         ]);
+    }
+
+    public function addExpertise(Instructor $instructor, Request $expertise)
+    {
+        if ($expertise->expertises) {
+            // assigne expertises for the instructor
+            foreach ($expertise->expertises as $exp) {
+                Expertise::create([
+                    'instructor_id' => $instructor->id,
+                    'name' => $exp,
+                ]);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Expertise added successfully',
+                'instcutor' => new InstructorResource($instructor->load('expertises')),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'No Expertise Passed',
+            ]);
+        }
     }
 }

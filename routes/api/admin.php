@@ -14,6 +14,7 @@ Route::prefix('admin')
     ->group(function () {
 
         Route::apiResource('instructors', InstructorController::class);
+        Route::post('instructors/{instructor}/expertise', [InstructorController::class, 'addExpertise']);
 
         Route::apiResource('categories', CategoryController::class)
             ->only(['store', 'update', 'destroy']);

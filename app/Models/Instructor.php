@@ -24,4 +24,9 @@ class Instructor extends Model
     {
         return $this->hasMany(Course::class);
     }
+
+    public function expertises()
+    {
+        return $this->hasMany(Expertise::class);
+    }
 }
