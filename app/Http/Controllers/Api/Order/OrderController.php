@@ -10,9 +10,18 @@ use App\Models\User;
 
 class OrderController extends Controller
 {
+    public function pendingOrders()
+    {
+        $orders = Order::with('cartItems.course', 'user')
+            ->where('status', 'pending')
+            ->get();
+
+        return response()->json(['orders' => $orders], 200);
+    }
+
     public function listOrders()
     {
-        $orders = Order::with('cartItems.course', 'user')->where('status', 'pending')->get();
+        $orders = Order::with('cartItems.course', 'user')->get();
 
         return response()->json(['orders' => $orders], 200);
     }

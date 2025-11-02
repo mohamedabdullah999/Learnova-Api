@@ -85,4 +85,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Course::class, 'enrollments');
     }
+
+    public function isEnrolledInCourse(int $courseId): bool
+    {
+        return $this->courses()->where('course_id', $courseId)->exists();
+    }
 }

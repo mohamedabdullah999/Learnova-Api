@@ -23,7 +23,6 @@ class CourseResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'img' => $this->img,
-            'status' => $this->status,
             'category' => new CategoryResource($this->whenLoaded('category')),
             'instructor' => new InstructorResource($this->whenLoaded('instructor')),
             'lessons' => LessonResource::collection($this->whenLoaded('lessons')),

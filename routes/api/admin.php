@@ -13,19 +13,20 @@ Route::prefix('admin')
     ->middleware(['auth:api', 'checkAdmin'])
     ->group(function () {
 
-        Route::apiResource('instructors', InstructorController::class);
+        Route::apiResource('instructors', InstructorController::class)->only(['store', 'update', 'destroy']);
         Route::post('instructors/{instructor}/expertise', [InstructorController::class, 'addExpertise']);
 
         Route::apiResource('categories', CategoryController::class)
             ->only(['store', 'update', 'destroy']);
 
-        Route::apiResource('courses', CourseController::class);
+        Route::apiResource('courses', CourseController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::apiResource('contacts', ContactController::class)->except([
             'store',
         ]);
 
         Route::get('/orders', [OrderController::class, 'listOrders']);
+        Route::get('/pendingOrders', [OrderController::class, 'pendingOrders']);
         Route::post('/order/{order_id}/approve', [OrderController::class, 'approveOrder']);
 
         Route::put('/courses/lessons/{lesson}', [LessonController::class, 'update']);

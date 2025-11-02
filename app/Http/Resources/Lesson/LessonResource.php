@@ -15,11 +15,19 @@ class LessonResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isLoggedIn = auth()->check();
+
+        $isEnrolled = $isLoggedIn
+            ? auth()->user()->isEnrolledInCourse($this->course_id)
+            : false;
+
+        $canAccessVideo = $isLoggedIn && $isEnrolled;
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'video_url' => $this->video_path,
+            'video_url' => $canAccessVideo ? $this->video_path : 'You need to be logged in and buy this course to access the video URL',
             'course_id' => $this->course_id,
             'duration' => $this->duration,
             'course' => new CourseResource($this->whenLoaded('course')),
